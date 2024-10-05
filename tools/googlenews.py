@@ -67,8 +67,10 @@ def extract_google_news_json(searchword_list, time_op, additional_word):
             # "hl": "en",
             "filter": 1,
             "tbm": "nws",
+            "sbd":1,
             "as_qdr": time,
-            "num": 50,
+            "num": 100,
+            
         }
         search = GoogleSearch(params)
         results = search.get_dict()
@@ -118,6 +120,7 @@ def extract_google_news_JA_json(searchword_list, time_op, additional_word):
 
     serp_url_list = []
     wds = []
+    additional_word = ""
     words = searchword_list
     for wd in words:
         params = {
@@ -125,14 +128,18 @@ def extract_google_news_JA_json(searchword_list, time_op, additional_word):
             "engine": "google",
             "q": wd + " " + additional_word,
             "google_domain": "google.co.jp",
-            "hl": "ja",
+            #"hl": "ja",
+            #"gl":"ja",
+            "gl":"JP",
             "filter": 1,
             "tbm": "nws",
+            "sbd":1,
             "as_qdr": time,
-            "num": 50,
+            "num": 100,
         }
         search = GoogleSearch(params)
         results = search.get_dict()
+
 
         # urlを抽出
         import requests
@@ -181,7 +188,7 @@ def search_google_news(state):
     try:
         
         #Search
-        search_docs = extract_google_news_json(searchword_list=[state['question']], time_op="過去1年", additional_word="")
+        search_docs = extract_google_news_json(searchword_list=[state['question']], time_op="直近1ヶ月", additional_word="")
 
         #Format
         formatted_search_docs = "\n\n---\n\n".join(
@@ -204,7 +211,7 @@ def search_google_news_JA(state):
 
     try:
         #Search
-        search_docs = extract_google_news_JA_json(searchword_list=[state['question']], time_op="過去1年", additional_word="")
+        search_docs = extract_google_news_JA_json(searchword_list=[state['question']], time_op="直近1ヶ月", additional_word="")
 
         #Format
         formatted_search_docs = "\n\n---\n\n".join(

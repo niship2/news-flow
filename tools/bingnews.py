@@ -51,8 +51,8 @@ def exclude_site(url):
 
 def get_bing_news(word, time_op, additional_word):
     # Add your Bing Search V7 subscription key and endpoint to your environment variables.
-    subscription_key = "95756d861f73447eae43f9bf90ec3b4b"
-    endpoint = "https://api.bing.microsoft.com/v7.0/news/search"
+    subscription_key = st.secrets["BING_subscription_key"]
+    endpoint = st.secrets["BING_subscription_keyendpoint"]
 
     # Query term(s) to search for.
 
@@ -63,7 +63,7 @@ def get_bing_news(word, time_op, additional_word):
         "mkt": mkt,
         "freshness": return_period(nws="bing", time_op=time_op),
         # "since": time1,
-        "count": 50,
+        "count": 100,
         "sortBy": "Date",
     }
     headers = {"Ocp-Apim-Subscription-Key": subscription_key}

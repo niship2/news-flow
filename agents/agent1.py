@@ -1,5 +1,4 @@
 import streamlit as st
-import streamlit_mermaid as stmd
 from typing import List,Dict
 from langchain_core.messages import HumanMessage
 from langgraph.graph import END, MessageGraph
@@ -75,8 +74,14 @@ def generate_answer(state):
                                                        context=context)    
     
     # Answer
+    try:
+        answer = llm.with_structured_output(FinalAnswers).invoke([SystemMessage(content=answer_instructions)]+[HumanMessage(content=f"List the articles")])
+    except:
+        answer_instructions = answer_template.format(question=question, 
+                                                       context=context[0:10000])
+        answer = llm.with_structured_output(FinalAnswers).invoke([SystemMessage(content=answer_instructions)]+[HumanMessage(content=f"List the articles")])
+            
 
-    answer = llm.with_structured_output(FinalAnswers).invoke([SystemMessage(content=answer_instructions)]+[HumanMessage(content=f"List the articles")])
       
     # Append it to state
     return {"answer": answer}
@@ -90,15 +95,15 @@ def remove_duplicate(state):
     question = state["question"]
     answer = state["answer"]
 
-    print(answer)
+    #print(answer)
 
     # Template
     answer_template = """
     * Combine similar or duplicate articles into one article.
-    * Also removedelete articles not related to startups, fundraising, talent acquisition, mergers and acquisitions, IPOs, or technology. 
+    
     \n\n articles of this answer: {answer}"""
     answer_instructions = answer_template.format(answer=answer)    
-    
+    ##* Also removedelete articles not related to startups, fundraising, talent acquisition, mergers and acquisitions, IPOs, or technology. 
     # Answer
 
     answer = llm.with_structured_output(FinalAnswers).invoke([SystemMessage(content=answer_instructions)]+[HumanMessage(content=f"Remove duplicates.")])
@@ -123,7 +128,7 @@ def generate_searchword(state):
 
     #Answer
     searchwords = llm.invoke([SystemMessage(content=answer_instructions)]+[HumanMessage(content=f"Create the searchwords.")])
-    print(searchwords)
+    #print(searchwords)
 
     # Append it to state
     return {"context":context,
@@ -175,8 +180,5 @@ def agent_builder(select_tools):
     builder.add_edge("remove_duplicate", END)
 
     graph = builder.compile()
-
-    with st.expander("抽出フロー"):
-        stmd.st_mermaid(graph.get_graph().draw_mermaid(),height="500px")
 
     return graph
