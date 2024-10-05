@@ -12,7 +12,7 @@ st.write("過去２週間の情報を中心に")
 
 searchword = st.text_input("キーワード入力",value="sakana AI")
 #MODEL_NAME = st.sidebar.selectbox("モデル選択",["gpt-4o","gemini"])
-SELECTED_TOOLS = st.sidebar.multiselect("ツール選択",["search_google_news","search_google_news_JA","search_bing_news","search_wikipedia","search_web"],default=["search_google_news","search_google_news_JA"])
+SELECTED_TOOLS = st.sidebar.multiselect("ツール選択",["search_google_news","search_google_news_JA","search_bing_news","search_wikipedia","search_web","search_youcom"],default=["search_google_news","search_google_news_JA"])
 
 if st.button("検索"):
     st.sidebar.warning("抽出に時間がかかる場合があるので注意。今後改善していきます")

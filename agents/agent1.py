@@ -37,6 +37,7 @@ from tools.googlenews import search_google_news_JA
 from tools.googlenews import search_google_news
 from tools.tavilysearch import search_web
 from tools.wikipedia import search_wikipedia
+from tools.youcom import search_youcom
 
 
 class State(TypedDict):
@@ -99,11 +100,11 @@ def remove_duplicate(state):
 
     # Template
     answer_template = """
-    * Combine similar or duplicate articles into one article.
-    
+    * Combine similar or duplicate articles based on the title and date of the article.
+    * Also removedelete articles not related to technology,startups, fundraising, talent acquisition, mergers and acquisitions or IPOs. 
     \n\n articles of this answer: {answer}"""
     answer_instructions = answer_template.format(answer=answer)    
-    ##* Also removedelete articles not related to startups, fundraising, talent acquisition, mergers and acquisitions, IPOs, or technology. 
+    ##
     # Answer
 
     answer = llm.with_structured_output(FinalAnswers).invoke([SystemMessage(content=answer_instructions)]+[HumanMessage(content=f"Remove duplicates.")])
@@ -170,6 +171,12 @@ def agent_builder(select_tools):
         builder.add_node("search_bing_news", search_bing_news)
         builder.add_edge(START, "search_bing_news")
         builder.add_edge("search_bing_news", "generate_answer")
+
+    if "search_youcom" in select_tools:
+        builder.add_node("search_youcom", search_youcom)
+        builder.add_edge(START, "search_youcom")
+        builder.add_edge("search_youcom", "generate_answer")
+
 
     # Initialize each node with node_secret 
     builder.add_node("generate_answer", generate_answer)

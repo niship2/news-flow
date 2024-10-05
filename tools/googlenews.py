@@ -222,6 +222,9 @@ def search_google_news_JA(state):
     
         #print(formatted_search_docs)
 
+        with st.expander("GoogleNews取得データ"):
+            st.write(formatted_search_docs)
+
 
         return {"context": [formatted_search_docs]}    
     except:

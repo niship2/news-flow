@@ -21,6 +21,9 @@ def search_web(state):
             ]
         )
         #print(formatted_search_docs)
+        with st.expander("TavilySearch取得データ"):
+            st.write(formatted_search_docs)
+
 
         return {"context": [formatted_search_docs]} 
     except:
