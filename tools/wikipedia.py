@@ -3,7 +3,7 @@ from utils.utils import utils
 from langchain_community.document_loaders import WikipediaLoader
 import streamlit as st
 
-@st.cache_data
+
 def search_wikipedia(state):
     
     """ Retrieve docs from wikipedia """

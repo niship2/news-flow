@@ -181,7 +181,7 @@ def extract_google_news_JA_json(searchword_list, time_op, additional_word):
 
 
 
-@st.cache_data
+
 def search_google_news(state):
     """retrieve docs from google news"""
 
@@ -204,30 +204,31 @@ def search_google_news(state):
 
         return {"context": [formatted_search_docs]} 
     except:
+        st.write("GoogleNews取得失敗")
         return {"context": ["-"]}
 
 
-@st.cache_data
 def search_google_news_JA(state):
     """retrieve docs from google news"""
 
     try:
         #Search
-        search_docs = extract_google_news_JA_json(searchword_list=[state['question']], time_op="直近1ヶ月", additional_word="")
+        search_docs_JA = extract_google_news_JA_json(searchword_list=[state['question']], time_op="直近1ヶ月", additional_word="")
 
         #Format
-        formatted_search_docs = "\n\n---\n\n".join(
+        formatted_search_docs_JA = "\n\n---\n\n".join(
             [
             f'<Document source="{doc["source"]}" date="{doc["date"]}"/>\n{doc["title"]}\n{doc["link"]}\n</Document>'
-            for doc in search_docs
+            for doc in search_docs_JA
             ])
     
         #print(formatted_search_docs)
 
         with st.expander("GoogleNews_JA取得データ"):
-            st.write(formatted_search_docs)
+            st.write(formatted_search_docs_JA)
 
 
-        return {"context": [formatted_search_docs]}    
+        return {"context": [formatted_search_docs_JA]}    
     except:
+        st.write("GoogleNews_JA取得失敗")
         return {"context": ["-"]}

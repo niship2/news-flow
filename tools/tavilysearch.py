@@ -2,7 +2,7 @@ from utils.utils import utils
 from langchain_community.tools.tavily_search import TavilySearchResults
 import streamlit as st
 
-@st.cache_data
+
 def search_web(state):
     
     """ Retrieve docs from web search """

@@ -4,7 +4,6 @@ import streamlit as st
 
 
 
-@st.cache_data
 def search_youcom(state):
     
     """ Retrieve docs from youcom news search """

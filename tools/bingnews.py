@@ -99,7 +99,7 @@ def extract_bing_news(searchword_list, time_op, additional_word):
         pass#bingnewsdf[["searchword", "source", "link", "description", "datePublished"]].to_dict(orient="records")
 
 
-@st.cache_data
+
 def search_bing_news(state):
     """retrieve docs from bing news"""
 
