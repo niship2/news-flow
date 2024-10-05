@@ -10,7 +10,7 @@ def search_web(state):
     try:
 
         # Search
-        tavily_search = TavilySearchResults(max_results=5)
+        tavily_search = TavilySearchResults(max_results=20)
         search_docs = tavily_search.invoke(state['question'] + " news")
 
         # Format

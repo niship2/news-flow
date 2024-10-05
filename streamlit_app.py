@@ -43,5 +43,5 @@ if st.button("検索"):
     #use_container_width=True,
     hide_index=True)
 
-    #with st.expander("参考：全取得データ"):
-    #    st.write(result['context'])
+    with st.expander("参考：全取得データ"):
+        st.write(result['context'])
