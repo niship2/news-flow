@@ -10,10 +10,10 @@ def search_youcom(state):
 
     try:
 
-
+    
         url = "https://api.ydc-index.io/news"
 
-        querystring = {"query":"sakana AI"}
+        querystring = {"query":state['question']}
 
         YOUCOM_API_KEY = st.secrets["YOUCOM_API_KEY"]
 
