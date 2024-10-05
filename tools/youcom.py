@@ -16,7 +16,9 @@ def search_youcom(state):
 
         querystring = {"query":"sakana AI"}
 
-        headers = {"X-API-Key": "c50e7292-2bdf-4709-8e23-b79854f9ef49<__>1OJsaXETU8N2v5f4sHbmFE8E"}
+        YOUCOM_API_KEY = st.secrets["YOUCOM_API_KEY"]
+
+        headers = {"X-API-Key": YOUCOM_API_KEY}
 
 
        # Search
