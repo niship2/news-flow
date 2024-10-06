@@ -3,7 +3,7 @@ from langchain_community.tools.tavily_search import TavilySearchResults
 import streamlit as st
 
 
-def search_web(state):
+def search_tavily(state):
     
     """ Retrieve docs from web search """
 
@@ -22,7 +22,7 @@ def search_web(state):
         )
         #print(formatted_search_docs)
         with st.expander("TavilySearch取得データ"):
-            st.write(formatted_search_docs)
+            st.write(formatted_search_docs,key="tavilysearch")
 
 
         return {"context": [formatted_search_docs]} 

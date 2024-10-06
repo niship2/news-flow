@@ -116,7 +116,7 @@ def search_bing_news(state):
         )
 
         with st.expander("BingNews取得データ"):
-            st.write(formatted_search_docs)
+            st.write(formatted_search_docs,key="bingnews")
 
         return {"context": [formatted_search_docs]} 
     except:

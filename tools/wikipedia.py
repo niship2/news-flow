@@ -23,7 +23,7 @@ def search_wikipedia(state):
         )
 
         with st.expander("Wikipedia取得データ"):
-            st.write(formatted_search_docs)
+            st.write(formatted_search_docs,key="wikipedia")
 
 
         return {"context": [formatted_search_docs]} 

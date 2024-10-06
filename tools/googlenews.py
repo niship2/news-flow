@@ -9,6 +9,7 @@ from serpapi import GoogleSearch
 
 SERPAPI_API_KEY = st.secrets['SERP_API_KEY']
 
+
 def get_date_format(d):
     dt = datetime.today()  # ローカルな現在の日付と時刻を取得
     if "hours ago" in str(d) or "mins ago" in str(d):
@@ -40,6 +41,8 @@ def return_period(nws, time_op):
             return "Week"
         elif time_op == "直近1ヶ月":
             return "Month"
+        elif time_op == "過去1年":
+            return "Year"        
         else:
             return "Day"
 
@@ -69,7 +72,7 @@ def extract_google_news_json(searchword_list, time_op, additional_word):
             "tbm": "nws",
             "sbd":1,
             "as_qdr": time,
-            "num": 100,
+            "num": 30,
             
         }
         search = GoogleSearch(params)
@@ -81,14 +84,14 @@ def extract_google_news_json(searchword_list, time_op, additional_word):
         # serp_url_list.append(results["search_information"]["menu_items"][0]["serpapi_link"])
         serp_url_list.append(results["search_metadata"]["json_endpoint"])
         wds.append(wd)
-        try:
-            for res in results["serpapi_pagination"]["other_pages"].values():
-                jsonres = requests.get(res + "&api_key=" + SERPAPI_API_KEY)
-                # print(jsonres.json()["search_metadata"]["json_endpoint"])
-                serp_url_list.append(jsonres.json()["search_metadata"]["json_endpoint"])
-                wds.append(wd)
-        except:
-            pass
+        #try:
+        #    for res in results["serpapi_pagination"]["other_pages"].values():
+        #        jsonres = requests.get(res + "&api_key=" + SERPAPI_API_KEY)
+        #        # print(jsonres.json()["search_metadata"]["json_endpoint"])
+        #        serp_url_list.append(jsonres.json()["search_metadata"]["json_endpoint"])
+        #        wds.append(wd)
+        #except:
+        #    pass
 
     gnews_df = pd.DataFrame()
     for url in serp_url_list:
@@ -135,7 +138,7 @@ def extract_google_news_JA_json(searchword_list, time_op, additional_word):
             "tbm": "nws",
             "sbd":1,
             "as_qdr": time,
-            "num": 100,
+            "num": 30,
         }
         search = GoogleSearch(params)
         results = search.get_dict()
@@ -147,14 +150,14 @@ def extract_google_news_JA_json(searchword_list, time_op, additional_word):
         # serp_url_list.append(results["search_information"]["menu_items"][0]["serpapi_link"])
         serp_url_list.append(results["search_metadata"]["json_endpoint"])
         wds.append(wd)
-        try:
-            for res in results["serpapi_pagination"]["other_pages"].values():
-                jsonres = requests.get(res + "&api_key=" + SERPAPI_API_KEY)
-                # print(jsonres.json()["search_metadata"]["json_endpoint"])
-                serp_url_list.append(jsonres.json()["search_metadata"]["json_endpoint"])
-                wds.append(wd)
-        except:
-            pass
+        #try:
+        #    for res in results["serpapi_pagination"]["other_pages"].values():
+        #        jsonres = requests.get(res + "&api_key=" + SERPAPI_API_KEY)
+        #        # print(jsonres.json()["search_metadata"]["json_endpoint"])
+        #        serp_url_list.append(jsonres.json()["search_metadata"]["json_endpoint"])
+        #        wds.append(wd)
+        #except:
+        #    pass
 
     gnews_df = pd.DataFrame()
     for url in serp_url_list:
@@ -188,7 +191,7 @@ def search_google_news(state):
     try:
         
         #Search
-        search_docs = extract_google_news_json(searchword_list=[state['question']], time_op="直近1ヶ月", additional_word="")
+        search_docs = extract_google_news_json(searchword_list=[state['question']], time_op=state["time_op"], additional_word="")
 
         #Format
         formatted_search_docs = "\n\n---\n\n".join(
@@ -199,7 +202,7 @@ def search_google_news(state):
     
         #print(formatted_search_docs)
         with st.expander("GoogleNews取得データ"):
-            st.write(formatted_search_docs)        
+            st.write(formatted_search_docs,key="googlenews")        
 
 
         return {"context": [formatted_search_docs]} 
@@ -213,7 +216,7 @@ def search_google_news_JA(state):
 
     try:
         #Search
-        search_docs_JA = extract_google_news_JA_json(searchword_list=[state['question']], time_op="直近1ヶ月", additional_word="")
+        search_docs_JA = extract_google_news_JA_json(searchword_list=[state['question']], time_op=state["time_op"], additional_word="")
 
         #Format
         formatted_search_docs_JA = "\n\n---\n\n".join(
@@ -225,7 +228,7 @@ def search_google_news_JA(state):
         #print(formatted_search_docs)
 
         with st.expander("GoogleNews_JA取得データ"):
-            st.write(formatted_search_docs_JA)
+            st.write(formatted_search_docs_JA,key="googlenews_JA")
 
 
         return {"context": [formatted_search_docs_JA]}    

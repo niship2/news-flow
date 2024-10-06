@@ -8,9 +8,7 @@ def search_youcom(state):
     
     """ Retrieve docs from youcom news search """
 
-    try:
-
-    
+    try:    
         url = "https://api.ydc-index.io/news"
 
         querystring = {"query":state['question']}
@@ -22,11 +20,8 @@ def search_youcom(state):
 
        # Search
         response = requests.request("GET", url, headers=headers, params=querystring)
-
         res = json.loads(response.text)
 
- 
-        
 
         # Format
         formatted_search_docs = "\n\n---\n\n".join(
@@ -36,7 +31,8 @@ def search_youcom(state):
             ])
         #print(formatted_search_docs)
         with st.expander("youcom取得データ"):
-            st.write(formatted_search_docs)        
+            st.write("youcom取得データ")
+            st.write(formatted_search_docs,key="youcom")        
 
         return {"context": [formatted_search_docs]} 
     except:

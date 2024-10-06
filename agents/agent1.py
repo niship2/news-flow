@@ -35,7 +35,7 @@ llm = ChatOpenAI(model="gpt-4o",temperature=0.2)
 from tools.bingnews import search_bing_news
 from tools.googlenews import search_google_news_JA
 from tools.googlenews import search_google_news
-from tools.tavilysearch import search_web
+from tools.tavilysearch import search_tavily
 from tools.wikipedia import search_wikipedia
 from tools.youcom import search_youcom
 
@@ -44,6 +44,7 @@ class State(TypedDict):
     question: str
     answer: str
     context: Annotated[list, operator.add]
+    time_op: str
 
 
 class FinalAnswer(BaseModel):
@@ -114,43 +115,18 @@ def remove_duplicate(state):
 
 
 
-def generate_searchword(state):
-    """ Node to generate searchword """
-
-    #Get State
-    context = state["context"]
-    question = state["question"]
-    #print(state["question"])
-
-    #Template
-    answer_template = """Create the 3 words or 3 sentence for websearch or news search related to {question} using this context: {context}."""
-    answer_instructions = answer_template.format(question=question, 
-                                                       context=context)
-
-    #Answer
-    searchwords = llm.invoke([SystemMessage(content=answer_instructions)]+[HumanMessage(content=f"Create the searchwords.")])
-    #print(searchwords)
-
-    # Append it to state
-    return {"context":context,
-        "question": question,
-        #    "question": question,
-        "searchwords":searchwords.content
-            }
-
-
 
 def agent_builder(select_tools):
     # Add nodes
     builder = StateGraph(State)
 
     #select_tools = ["search_google_news","search_google_news_JA","search_bing_news"]
-    #,"search_wikipedia","search_web"
+    #,"search_wikipedia","search_tavily"
 
-    if "search_web" in select_tools:
-        builder.add_node("search_web", search_web)
-        builder.add_edge(START, "search_web")
-        builder.add_edge("search_web", "generate_answer")
+    if "search_tavily" in select_tools:
+        builder.add_node("search_tavily", search_tavily)
+        builder.add_edge(START, "search_tavily")
+        builder.add_edge("search_tavily", "generate_answer")
 
     if "search_wikipedia" in select_tools:
         builder.add_node("search_wikipedia", search_wikipedia)
