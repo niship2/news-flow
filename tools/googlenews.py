@@ -3,7 +3,8 @@ import requests
 import streamlit as st
 import datetime
 from datetime import datetime, timedelta
-from serpapi import GoogleSearch
+#from serpapi import GoogleSearch
+from serpapi.google_search import GoogleSearch
 from utils.utils import return_period
 
 
