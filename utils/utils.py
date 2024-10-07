@@ -22,7 +22,7 @@ def return_period(nws, time_op):
         elif time_op == "直近1ヶ月":
             return "Month"
         elif time_op == "過去1年":
-            return "Year"        
+            return "Month"      
         else:
             return "Day"
     elif nws == "youcom":

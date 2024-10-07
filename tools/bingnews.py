@@ -70,6 +70,8 @@ def extract_bing_news(searchword_list, time_op, additional_word):
 def search_bing_news(state):
     """retrieve docs from bing news"""
 
+    
+
     #Search
     search_docs = extract_bing_news(searchword_list=[state['question']], time_op=state["time_op"], additional_word="")
     

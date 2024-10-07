@@ -1,7 +1,7 @@
 import requests
 import json
 import streamlit as st
-
+from utils.utils import return_period
 
 
 def search_youcom(state):
@@ -24,6 +24,8 @@ def search_youcom(state):
         response = requests.request("GET", url, headers=headers, params=querystring)
         res = json.loads(response.text)
 
+        
+
 
         # Format
         formatted_search_docs = "\n\n---\n\n".join(
@@ -32,9 +34,7 @@ def search_youcom(state):
             for doc in res["news"]["results"]
             ])
         #print(formatted_search_docs)
-        with st.expander("youcom取得データ"):
-            st.write("youcom取得データ")
-            st.write(formatted_search_docs,key="youcom")        
+     
 
         return {"context": [formatted_search_docs]} 
     except:
