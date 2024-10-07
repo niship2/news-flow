@@ -49,7 +49,7 @@ class State(TypedDict):
 
 class FinalAnswer(BaseModel):
     title:str
-    date: datetime
+    date: str
     source_url:str
     japanese_translation:str
 
@@ -76,14 +76,8 @@ def generate_answer(state):
                                                        context=context)    
     
     # Answer
-    try:
-        answer = llm.with_structured_output(FinalAnswers).invoke([SystemMessage(content=answer_instructions)]+[HumanMessage(content=f"List the articles")])
-    except:
-        answer_instructions = answer_template.format(question=question, 
-                                                       context=context[0:10000])
-        answer = llm.with_structured_output(FinalAnswers).invoke([SystemMessage(content=answer_instructions)]+[HumanMessage(content=f"List the articles")])
-            
-
+    answer = llm.with_structured_output(FinalAnswers).invoke([SystemMessage(content=answer_instructions)]+[HumanMessage(content=f"List the articles for {question}.")])
+  
       
     # Append it to state
     return {"answer": answer}
@@ -100,8 +94,9 @@ def remove_duplicate(state):
     #print(answer)
 
     # Template
-    answer_template = """
-    * Combine similar or duplicate articles based on the title and date of the article.
+    answer_template = f"""
+    * Remove articles that are not related to {question}.
+    * Combine similar or duplicate articles based on the title and date of the {answer}.
     * Also removedelete articles not related to technology,startups, fundraising, talent acquisition, mergers and acquisitions or IPOs. 
     \n\n articles of this answer: {answer}"""
     answer_instructions = answer_template.format(answer=answer)    
@@ -116,7 +111,7 @@ def remove_duplicate(state):
 
 
 
-def agent_builder(select_tools):
+def agent_builder(select_tools,drop_duplicates=False):
     # Add nodes
     builder = StateGraph(State)
 
@@ -137,6 +132,7 @@ def agent_builder(select_tools):
         builder.add_node("search_google_news", search_google_news)
         builder.add_edge(START, "search_google_news")
         builder.add_edge("search_google_news", "generate_answer")
+        
     
     if "search_google_news_JA" in select_tools:
         builder.add_node("search_google_news_JA", search_google_news_JA)
@@ -154,13 +150,15 @@ def agent_builder(select_tools):
         builder.add_edge("search_youcom", "generate_answer")
 
 
-    # Initialize each node with node_secret 
-    builder.add_node("generate_answer", generate_answer)
-    builder.add_node("remove_duplicate", remove_duplicate)
-
-    # 
-    builder.add_edge("generate_answer", "remove_duplicate")
-    builder.add_edge("remove_duplicate", END)
+    if drop_duplicates:
+        builder.add_node("generate_answer", generate_answer)
+        builder.add_node("remove_duplicate", remove_duplicate)
+        builder.add_edge("generate_answer", "remove_duplicate")
+        builder.add_edge("remove_duplicate", END)
+    else:
+        # Initialize each node with node_secret 
+        builder.add_node("generate_answer", generate_answer)
+        builder.add_edge("generate_answer", END)
 
     graph = builder.compile()
 

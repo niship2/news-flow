@@ -13,13 +13,17 @@ searchword = st.text_input("キーワード入力",value="sakana AI")
 #MODEL_NAME = st.sidebar.selectbox("モデル選択",["gpt-4o","gemini"])
 SELECTED_TOOLS = st.sidebar.multiselect("ツール選択",["search_google_news","search_google_news_JA","search_bing_news","search_wikipedia","search_tavily","search_youcom"],default=["search_google_news","search_google_news_JA"])
 TIME_OP= st.sidebar.selectbox("期間選択(※)",["直近24時間","直近1週間","過去2週間","直近1ヶ月","過去1年"],index=2)
-SOURCE_DOMAIN = st.sidebar.multiselect("ソース選択（現状無効）",["thebridge.jp","prtimes.jp","yYahoo!ファイナンス"])
-
 st.sidebar.write("※：期間選択はGoogleNews,BingNewsのみ指定可能")
+st.markdown("---")
+
+SOURCE_DOMAIN = st.sidebar.multiselect("ソース選択（現状無効）",["thebridge.jp","prtimes.jp","yYahoo!ファイナンス"])
+DROP_DUPLICATES = st.sidebar.checkbox("重複削除",value=False)
+
+
 
 if st.button("検索"):
     st.sidebar.warning("抽出に時間がかかる場合があるので注意。今後改善していきます")
-    graph= agent_builder(SELECTED_TOOLS)
+    graph= agent_builder(SELECTED_TOOLS,DROP_DUPLICATES)
 
     #with st.sidebar.expander("抽出フロー"):
         #st.write(graph.get_graph().print_ascii())
@@ -29,7 +33,7 @@ if st.button("検索"):
 
     result = graph.invoke({"question": searchword,"time_op":TIME_OP})
 
-    articles = [[x.title,x.date.strftime("%y-%m-%d"),x.source_url,x.japanese_translation] for x in  result['answer'].content]
+    articles = [[x.title,x.date,x.source_url,x.japanese_translation] for x in  result['answer'].content]
 
     st.write("記事まとめ：これらの記事を要約して３行にまとめます（未実装）")
     

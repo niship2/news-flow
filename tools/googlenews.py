@@ -64,7 +64,7 @@ def extract_google_news_json(searchword_list, time_op, additional_word):
             "tbm": "nws",
             "sbd":1,
             "as_qdr": time,
-            "num": 30,
+            "num": 100,
             
         }
         search = GoogleSearch(params)
@@ -130,7 +130,7 @@ def extract_google_news_JA_json(searchword_list, time_op, additional_word):
             "tbm": "nws",
             "sbd":1,
             "as_qdr": time,
-            "num": 30,
+            "num": 100,
         }
         search = GoogleSearch(params)
         results = search.get_dict()
