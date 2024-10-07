@@ -1,30 +1,42 @@
-def utils():
-    os.environ['OPENAI_API_KEY'] = st.secrets['OPENAI_API_KEY']
-    os.environ['TAVILY_API_KEY'] = st.secrets['TAVILY_API_KEY']
-    os.environ["GOOGLE_API_KEY"] = st.secrets["GOOGLE_API_KEY"]
-
-    from typing import List,Dict
-    from langchain_core.messages import HumanMessage
-    from langgraph.graph import END, MessageGraph
-
-    from langchain.output_parsers import (
-        RetryWithErrorOutputParser,
-        PydanticOutputParser,
-    )
-
-    from langchain.prompts import PromptTemplate
-    from langchain_core.pydantic_v1 import BaseModel, Field, validator
-
-    from langchain_google_genai import ChatGoogleGenerativeAI
-    from langchain_openai import ChatOpenAI
-
-    #from IPython.display import Image, display
-
-    from typing import Any
-    from typing_extensions import TypedDict
-
-    from langgraph.graph import StateGraph, START, END
-
-
-    from typing import List,Dict
-
+def return_period(nws, time_op):
+    if nws == "google":
+        if time_op == "直近24時間":
+            return "d1"
+        elif time_op == "直近1週間":
+            return "w1"
+        elif time_op == "直近2週間":
+            return "w2"
+        elif time_op == "直近1ヶ月":
+            return "m1"
+        elif time_op == "過去1年":
+            return "1y"
+        else:
+            return "d1"
+    elif nws == "bing":
+        if time_op == "直近24時間":
+            return "Day"
+        elif time_op == "直近1週間":
+            return "Week"
+        elif time_op == "直近2週間":
+            return "Week"
+        elif time_op == "直近1ヶ月":
+            return "Month"
+        elif time_op == "過去1年":
+            return "Year"        
+        else:
+            return "Day"
+    elif nws == "youcom":
+        if time_op == "直近24時間":
+            return "day"
+        elif time_op == "直近1週間":
+            return "week"
+        elif time_op == "直近2週間":
+            return "week"
+        elif time_op == "直近1ヶ月":
+            return "month"
+        elif time_op == "過去1年":
+            return "year"        
+        else:
+            return "day"
+    else:
+        return "m1"

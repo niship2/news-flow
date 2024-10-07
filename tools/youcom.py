@@ -8,10 +8,12 @@ def search_youcom(state):
     
     """ Retrieve docs from youcom news search """
 
+    
     try:    
         url = "https://api.ydc-index.io/news"
 
-        querystring = {"query":state['question']}
+        querystring = {"query":state['question'],"recency": return_period(nws="youcom", time_op=state["time_op"])}
+        #"recency": "month",  # day, week, month, year
 
         YOUCOM_API_KEY = st.secrets["YOUCOM_API_KEY"]
 

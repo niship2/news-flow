@@ -1,50 +1,42 @@
-from utils.utils import utils
 import pandas as pd
 import requests
 import streamlit as st
 import datetime
-from datetime import datetime
+from datetime import datetime, timedelta
 from serpapi import GoogleSearch
+from utils.utils import return_period
 
 
 SERPAPI_API_KEY = st.secrets['SERP_API_KEY']
 
 
+
+
 def get_date_format(d):
     dt = datetime.today()  # ローカルな現在の日付と時刻を取得
-    if "hours ago" in str(d) or "mins ago" in str(d):
-        return dt.date()
+    if "hours ago" in str(d) or "mins ago" in str(d) or "hour ago" in str(d) or "min ago" in str(d):
+        ago = dt.date()
+    elif "days ago" in str(d):
+        ago =dt.date() - timedelta(days=int(d.replace(" days ago", "")))
+    elif "day ago" in str(d):
+        ago = dt.date() - timedelta(days=int(d.replace(" day ago", "")))        
+    elif "weeks ago" in str(d):
+        ago = dt.date() - timedelta(weeks=int(d.replace(" weeks ago", "")))
+    elif "week ago" in str(d):
+        ago = dt.date() - timedelta(weeks=int(d.replace(" week ago", "")))
+    elif "時間前" in str(d) or "分前" in str(d):
+        ago = dt.date()
+    elif "日前" in str(d):
+        ago = dt.date() - timedelta(days=int(d.replace("日前", "")))
+    elif "週間前" in str(d):
+        ago = dt.date() - timedelta(weeks=int(d.replace("週間前", "")))
     else:
-        return str(d)
+        ago= dt.date()
 
+    print(str(ago))
 
-def return_period(nws, time_op):
-    if nws == "google":
-        if time_op == "直近24時間":
-            return "d1"
-        elif time_op == "直近1週間":
-            return "w1"
-        elif time_op == "直近2週間":
-            return "w2"
-        elif time_op == "直近1ヶ月":
-            return "m1"
-        elif time_op == "過去1年":
-            return "1y"
-        else:
-            return "d1"
-    else:
-        if time_op == "直近24時間":
-            return "Day"
-        elif time_op == "直近1週間":
-            return "Week"
-        elif time_op == "直近2週間":
-            return "Week"
-        elif time_op == "直近1ヶ月":
-            return "Month"
-        elif time_op == "過去1年":
-            return "Year"        
-        else:
-            return "Day"
+    return str(ago)[0:10]
+
 
 
 def exclude_site(url):
@@ -151,6 +143,7 @@ def extract_google_news_JA_json(searchword_list, time_op, additional_word):
         serp_url_list.append(results["search_metadata"]["json_endpoint"])
         wds.append(wd)
         #try:
+        #  残りのヒット分も全部取る場合
         #    for res in results["serpapi_pagination"]["other_pages"].values():
         #        jsonres = requests.get(res + "&api_key=" + SERPAPI_API_KEY)
         #        # print(jsonres.json()["search_metadata"]["json_endpoint"])
@@ -172,14 +165,10 @@ def extract_google_news_JA_json(searchword_list, time_op, additional_word):
             pass
 
     # ちょっと整形
-    #gnews_df = gnews_df.reset_index().drop(
-    #    columns={"position", "index"}
-    #)  # ["pubdate","url","title","description","related_industries","related_companies","keywords"]
     gnews_df["date"] = gnews_df["date"].apply(get_date_format)
     gnews_df["exclude"] = gnews_df["link"].apply(exclude_site)
     gnews_df = gnews_df[gnews_df["exclude"] == True]
-    # gnews_df["genre"] = task_name
-
+    
     return gnews_df[["searchword", "title", "link", "date", "source", "snippet"]].to_dict(orient="records")
 
 
@@ -200,9 +189,6 @@ def search_google_news(state):
             for doc in search_docs
             ])
     
-        #print(formatted_search_docs)
-        with st.expander("GoogleNews取得データ"):
-            st.write(formatted_search_docs,key="googlenews")        
 
 
         return {"context": [formatted_search_docs]} 
@@ -227,11 +213,9 @@ def search_google_news_JA(state):
     
         #print(formatted_search_docs)
 
-        with st.expander("GoogleNews_JA取得データ"):
-            st.write(formatted_search_docs_JA,key="googlenews_JA")
-
 
         return {"context": [formatted_search_docs_JA]}    
-    except:
+    except Exception as e:
+        print(e)
         st.write("GoogleNews_JA取得失敗")
         return {"context": ["-"]}

@@ -1,4 +1,3 @@
-from utils.utils import utils
 #@title tools
 from langchain_community.document_loaders import WikipediaLoader
 import streamlit as st

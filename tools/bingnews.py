@@ -1,44 +1,9 @@
-from utils.utils import utils
 import streamlit as st
 import pandas as pd
 import requests
 import datetime
 from datetime import datetime
-
-
-def get_date_format(d):
-    dt = datetime.today()  # ローカルな現在の日付と時刻を取得
-    if "hours ago" in str(d) or "mins ago" in str(d):
-        return dt.date()
-    else:
-        return str(d)
-
-
-def return_period(nws, time_op):
-    if nws == "google":
-        if time_op == "直近24時間":
-            return "d1"
-        elif time_op == "直近1週間":
-            return "w1"
-        elif time_op == "直近2週間":
-            return "w2"
-        elif time_op == "直近1ヶ月":
-            return "m1"
-        elif time_op == "過去1年":
-            return "1y"
-        else:
-            return "d1"
-    else:
-        if time_op == "直近24時間":
-            return "Day"
-        elif time_op == "直近1週間":
-            return "Week"
-        elif time_op == "直近2週間":
-            return "Week"
-        elif time_op == "直近1ヶ月":
-            return "Month"
-        else:
-            return "Day"
+from utils.utils import return_period
 
 
 def exclude_site(url):
@@ -91,7 +56,9 @@ def extract_bing_news(searchword_list, time_op, additional_word):
             bingnewsdf = pd.concat([bingnewsdf, temp_df])
 
             bingnewsdf["exclude"] = bingnewsdf["link"].apply(exclude_site)
-            bingnewsdf = get_bing_news[bingnewsdf["exclude"] == True]
+            bingnewsdf = bingnewsdf[bingnewsdf["exclude"] == True]
+
+            print(bingnewsdf)
 
             return bingnewsdf[["searchword", "source", "link", "description", "datePublished"]].to_dict(orient="records")
 
@@ -104,20 +71,21 @@ def search_bing_news(state):
     """retrieve docs from bing news"""
 
     #Search
-    search_docs = extract_bing_news(searchword_list=[state['question']], time_op="直近2週間", additional_word="")
+    search_docs = extract_bing_news(searchword_list=[state['question']], time_op=state["time_op"], additional_word="")
+    
 
     #Format
-    try:
-        formatted_search_docs = "\n\n---\n\n".join(
+    #try:
+    formatted_search_docs = "\n\n---\n\n".join(
             [
             f'<Document source="{doc["source"]}" date="{doc["datePublished"]}"/>\n{doc["source"]}\n{doc["link"]}\n</Document>'
             for doc in search_docs 
             ]
         )
 
-        with st.expander("BingNews取得データ"):
-            st.write(formatted_search_docs,key="bingnews")
+    with st.expander("BingNews取得データ"):
+        st.write(formatted_search_docs,key="bingnews")
 
-        return {"context": [formatted_search_docs]} 
-    except:
-        return {"context": ["-"]} 
+    return {"context": [formatted_search_docs]} 
+    #except:
+    #    return {"context": ["-"]} 

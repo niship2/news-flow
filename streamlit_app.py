@@ -1,4 +1,3 @@
-from utils.utils import utils
 import pandas as pd
 import streamlit as st
 import streamlit_mermaid as stmd
@@ -14,6 +13,8 @@ searchword = st.text_input("キーワード入力",value="sakana AI")
 #MODEL_NAME = st.sidebar.selectbox("モデル選択",["gpt-4o","gemini"])
 SELECTED_TOOLS = st.sidebar.multiselect("ツール選択",["search_google_news","search_google_news_JA","search_bing_news","search_wikipedia","search_tavily","search_youcom"],default=["search_google_news","search_google_news_JA"])
 TIME_OP= st.sidebar.selectbox("期間選択(※)",["直近24時間","直近1週間","過去2週間","直近1ヶ月","過去1年"],index=2)
+SOURCE_DOMAIN = st.sidebar.multiselect("ソース選択（現状無効）",["thebridge.jp","prtimes.jp","yYahoo!ファイナンス"])
+
 st.sidebar.write("※：期間選択はGoogleNews,BingNewsのみ指定可能")
 
 if st.button("検索"):
